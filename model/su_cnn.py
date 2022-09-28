@@ -28,13 +28,7 @@ class SuCNN(nn.Module):
         self.su_model = nn.Sequential(
             nn.Linear(opt.img_size, num_hidden_su),
             nn.ReLU(),
-            # nn.BatchNorm1d(self.shape[0]),
-            # nn.Dropout(dropoutrate),
-            # nn.Linear(num_hidden_su, num_hidden_su),
-            # nn.ReLU(),
-            # nn.BatchNorm1d(self.shape[0]),
             nn.Dropout(dropoutrate),
-            ###################################
             nn.Linear(num_hidden_su, self.out_num)
         )
 
