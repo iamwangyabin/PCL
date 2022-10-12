@@ -3,27 +3,11 @@
 import argparse
 import os
 import numpy as np
-import math
 from train.train import Train
-import torchvision.transforms as transforms
-from torchvision.utils import save_image
-import torch.autograd as autograd
-import collections
 
-from torch.utils.data import DataLoader
-from torchvision import datasets
-from torch.autograd import Variable
 import helper
 import copy
-from model import model_utils
-# import random
-
-from torch.distributions.multivariate_normal import MultivariateNormal
-import torch.nn as nn
-import torch.nn.functional as F
 import torch
-import pdb
-import pt_imagenet.dmodels.cifar as models
 import time
 
 print('=' * 60)
@@ -31,9 +15,6 @@ start = int(round(time.time()*1000))
 print('Start Time: ' + time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(start/1000)))
 print('=' * 60)
 
-# pdb.set_trace()
-# torch.manual_seed(123)
-# print(torch.manual_seed)
 
 os.makedirs('images', exist_ok=True)
 
@@ -139,7 +120,6 @@ alpha = 1e-5  # 0.00003  # 8e-5
 beta = 1.0
 beta1 = 1.0
 counter = 0
-# pdb.set_trace()
 threshold = torch.tensor(1.0).cuda().detach()
 # ####################################################################################################
 
@@ -178,12 +158,9 @@ for label_index in range(opt.num_class):
             train_function.loadModel()
             flag_test = True
             break
-
-            
         #############################################################################
         # Begin testing the learned model.
         if finished_epoch != epoch:
-
             epoch = finished_epoch
             i = 0
             if (epoch_num + 1) % (opt.max_epochs / 10) == 0:
@@ -195,42 +172,26 @@ for label_index in range(opt.num_class):
                 all = 0.0
 
                 train_function.eval()
-
                 testiterator = cl_dataset.get_testing_iterator_usual()
                 prior_all = 0
-                
                 test_labels = []
                 final_score = []
                 for test_imgs in testiterator:
-
                     score = []
-                    
                     if opt.dataset == 'mnist' or opt.dataset == 'emnist':
                         test_imgs_data = Tensor(test_imgs[0])
-
                     else:
                         test_imgs_data = Tensor(test_imgs[0])
-
                     test_labels.append(Tensor(test_imgs[1]))
-
-                    
                     for label_index_test in range(0, label_index + 1):
-
                         score_temp = train_function.forward(label_index_test, test_imgs_data)
                         score_temp = torch.sigmoid(score_temp)
-
                         score.append(score_temp)
-                    
                     final_score.append(torch.cat(score, dim=1))
-                
-                
                 test_labels_f = torch.cat(test_labels).data
                 final_score_f = torch.cat(final_score).data
-                
                 results = torch.argmax(final_score_f, dim=1).float()
-
                 if epoch_num == opt.max_epochs and i == 0:
-                    # pdb.set_trace()
                     print("=========================")
                     print(test_labels_f.data.cpu()[:20])
                     print(results.data.cpu()[:20])
@@ -238,13 +199,9 @@ for label_index in range(opt.num_class):
                     print(final_score_f.data.cpu()[:20])
                     print("=========================")
 
-
                 label_predicted = torch.Tensor.float((results == test_labels_f).data)
-
                 correct = torch.sum(label_predicted)
-
                 all = float(label_predicted.size(0))
-
                 train_function.train()
 
                 acc = correct / all
@@ -261,122 +218,3 @@ for label_index in range(opt.num_class):
 
         i = i+1
 
-
-##############################################
-#training tasks
-opt.max_epochs = 100
-train_function.cl_dataset.opt.max_epochs = opt.max_epochs
-train_function.initial_task()
-ending = int(round(time.time()*1000))
-print('Class Training End Time: ' + time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(ending/1000)))
-print("+" * 60)
-print("start training tasks!")
-print("wait...")
-flag_test = False
-for label_index in range(opt.num_tasks):
-    epoch_num = 0
-    flag_test = False
-    i = 0
-
-    train_function.global_index = label_index
-    max_acc = 0
-
-
-    for imgs in range(100000000):
-
-        
-        loss, finished_epoch = train_function.train_tasks(label_index)
-        
-        # pdb.set_trace()
-        if finished_epoch == -1:
-            # train_function.loadModel()
-            flag_test = True
-            break
-
-            
-        #############################################################################
-        # Begin testing the learned model.
-        if finished_epoch != epoch:
-
-            epoch = finished_epoch
-            i = 0
-            if (epoch_num + 1) % (10) == 0:
-                all = 0.0
-
-                train_function.eval()
-
-                testiterator = cl_dataset.get_testing_iterator_usual()
-                # i = 0
-                prior_all = 0
-                
-                test_labels = []
-                final_score = []
-                for test_imgs in testiterator:
-
-                    score = []
-                    
-                    if opt.dataset == 'mnist' or opt.dataset == 'emnist':
-                        test_imgs_data = Tensor(test_imgs[0])
-
-                    else:
-                        test_imgs_data = Tensor(test_imgs[0])
-
-                    test_labels.append(Tensor(test_imgs[1]))
-
-                    
-                    for label_index_test in range(0, label_index + 1):
-
-                        score_temp = train_function.forwardFinal(label_index_test, test_imgs_data)
-
-                        score.append(score_temp)
-                    
-                    final_score.append(torch.cat(score, dim=1))
-                
-                
-                test_labels_f = torch.cat(test_labels).data
-                final_score_f = torch.cat(final_score).data
-                
-                results = torch.argmax(final_score_f, dim=1).float()
-
-                if epoch_num == opt.max_epochs and i == 0:
-                    # pdb.set_trace()
-                    print("=========================")
-                    print(test_labels_f.data.cpu()[:20])
-                    print(results.data.cpu()[:20])
-                    print("=========================")
-                    print(final_score_f.data.cpu()[:20])
-                    print("=========================")
-
-
-                label_predicted = torch.Tensor.float(
-                    (results == test_labels_f).data)
-
-                correct = torch.sum(label_predicted)
-
-                all = float(label_predicted.size(0))
-
-                train_function.train()
-
-                acc = correct / all
-                all_acc.append(acc)
-                print("[Epoch %d/%d/%d] [Loss1: %0.2f] [PenP loss: %0.2f] [Constraints: %0.4f] [PenN: %0.4f] [PenPN: %0.4f] [Acc: %0.4f]" %
-                    (finished_epoch + 1, opt.max_epochs, label_index + 1, loss1, loss, constraints, loss_penalty_n, loss_penalty_pn, correct / all))
-                if flag_test:
-                    break
-                if acc >= max_acc:
-                    max_acc = acc
-                    # train_function.saveModel()
-
-            epoch_num += 1
-
-        i = i+1
-
-print('=' * 60)
-print('Start Time: ' + time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(start/1000)))
-print('=' * 60)
-end = int(round(time.time()*1000))
-print('End Time: ' + time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(end/1000)))
-print('=' * 60)
-
-# result = {'acc': all_acc}
-# torch.save(result, './mnist_our2.pkl')

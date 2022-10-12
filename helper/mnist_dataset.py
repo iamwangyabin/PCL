@@ -1,4 +1,5 @@
-from sklearn.datasets import fetch_mldata
+from sklearn.datasets import fetch_openml
+
 import numpy as np
 # from tensorflow.examples.tutorials.mnist import input_data
 import torchvision
@@ -9,14 +10,9 @@ __author__ = 'garrett_local'
 
 
 def _prepare_mnist_data():
-    mnist = fetch_mldata('MNIST original', data_home='../../../Data/')
-    # mnist = input_data.read_data_sets('MNIST_data', one_hot=False)
-    # mnist = torchvision.datasets.MNIST('../../../Data/',train=True,download=True)
+    mnist = fetch_openml('mnist_784', data_home='./Data/')
     x = mnist.data
     y = mnist.target
-    # pdb.set_trace()
-    # np.mean(x, 1).reshape(-1, 1) / 255.0
-    # / np.mean(x, 1).reshape(-1, 1)
     x = np.reshape(x, (x.shape[0], -1)) / 255.0 / 10.0
     x = x / np.linalg.norm(x, axis=1, keepdims=True) - 0.02
     train_x = np.asarray(x[:60000], dtype=np.float32)

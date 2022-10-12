@@ -33,3 +33,7 @@ python main.py --dataset mnist --gpu 0
 }
 ```
 
+
+python main_aiart.py --dataset cifar100 --gpu 0
+
+

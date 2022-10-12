@@ -171,7 +171,6 @@ class CLClassDataSet(object):
     def intialization(self, TaskorClass=False):
         if TaskorClass:
             self.splitdata_train, self.splitdata_test, self.splitdata_train_size = self._prepare_multi_Task_data()
-
         else:
             self.splitdata_train, self.splitdata_test, self.splitdata_train_size = self._prepare_multi_cl_training_data()
 
@@ -202,7 +201,7 @@ class CLClassDataSet(object):
         #     i: (self._train_x[(self._train_y >= self.class_index[i]) * (self._train_y < self.class_index[i + 1])], self._train_y[(self._train_y >= self.class_index[i]) * (self._train_y < self.class_index[i + 1])]) for i in range(self.num_tasks)}
         # splitdata_test = {
         #     i: (self._test_x[(self._test_y >= self.class_index[i]) * (self._test_y < self.class_index[i + 1])], self._test_y[(self._test_y >= self.class_index[i]) * (self._test_y < self.class_index[i + 1])]) for i in range(self.num_tasks)}
-
+        import pdb;pdb.set_trace()
         if self._shuffled_indexes is None:
             self._shuffled_indexes = {i: np.array(
                 range(splitdata_train[i][0].shape[0])) for i in range(self.num_classes)}
