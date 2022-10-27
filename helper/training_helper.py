@@ -7,7 +7,7 @@ import helper.emnist_dataset as emnist_dataset
 import helper.twentynews as twentynews
 import helper.DBPedia as DBPedia
 import helper.DBPedia_tfidf as DBPedia_tfidf
-# import network
+import helper.aiart_dataset as aiart_dataset
 
 __author__ = 'garrett_local'
 
@@ -32,11 +32,5 @@ def load_dataset(dataset_name):
         return DBPedia.DBPedia
     if dataset_name == 'dbpedia_tfidf':
         return DBPedia_tfidf.DBPedia
-
-
-# def load_network(cfg):
-#     network_name = cfg['network']['network_name']
-#     if network_name == 'MLP':
-#         return network.MultilayerPerceptron
-#     if network_name == 'CNN':
-#         return network.ConvolutionalNeuralNetwork
+    if dataset_name == 'aiart':
+        return aiart_dataset.AiartDataset

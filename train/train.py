@@ -1,21 +1,12 @@
 # Version 2.1
-import sys
-# sys.path.append('')
 from model import Recognizer_CNN
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
-import torchvision.transforms as transforms
-from torchvision.utils import save_image
 import torch.autograd as autograd
-from torch.utils.data import DataLoader
-from torchvision import datasets
 from torch.autograd import Variable
 import numpy as np
-import pdb
-import copy
 from model import SuCNN
-import math
 from model.model_structure import Model_Structure
 from model import model_utils
 
@@ -187,6 +178,8 @@ class Train():
             loss = loss + 0.01 * loss_l2_transfer  # twentynews
         if self.opt.dataset == 'cifar10':
             loss = loss + 0.005 * loss_l2_transfer  # cifar10
+        if self.opt.dataset == 'aiart':
+            loss = loss + 0.01 * loss_l2_transfer
 
         for temp_class_index in range(label_index_ + 1):
             self.optimizer[temp_class_index].zero_grad()

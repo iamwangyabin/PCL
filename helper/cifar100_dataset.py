@@ -6,7 +6,7 @@ import helper.cl_dataset as cl_dataset
 import helper.file_helper as file_manager
 import pdb
 import matplotlib.pyplot as plt
-from scipy import misc
+
 
 __author__ = 'garrett_local'
 

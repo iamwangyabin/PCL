@@ -19,7 +19,7 @@ print('=' * 60)
 os.makedirs('images', exist_ok=True)
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--max_epochs', type=int, default=100,
+parser.add_argument('--max_epochs', type=int, default=20,
                     help='number of epochs of training')
 parser.add_argument('--batch_size', type=int, default=100,
                     help='size of the batches')
@@ -45,7 +45,7 @@ parser.add_argument('--gpu', type=int, default=0, help='gpu no.')
 parser.add_argument('--dropoutrate', type=float, default=0.05, help='gpu no.')
 parser.add_argument('--sample_rate', type=float, default=0.5, help='gpu no.')
 parser.add_argument('--dataset', type=str, default='mnist',
-                    choices=['mnist', 'cifar10', 'cifar100','emnist', 'twentynews', 'dbpedia'], help='gpu no.')
+                    choices=['mnist', 'cifar10', 'cifar100','emnist', 'twentynews', 'dbpedia', 'aiart'], help='gpu no.')
 parser.add_argument('--negdataset', type=str, default='imagenet',
                     choices=['mnist', 'cifar10', 'imagenet', 'emnist'], help='negative dataset')
 opt = parser.parse_args()
@@ -56,7 +56,7 @@ elif opt.dataset == 'mnist' or opt.dataset == 'emnist':
     opt.img_size = 784
 elif opt.dataset == 'twentynews':
     opt.img_size = 2000
-elif opt.dataset == 'dbpedia':
+elif opt.dataset == 'dbpedia' or opt.dataset == 'aiart':
     opt.img_size = 768
 
 # pdb.set_trace()
@@ -72,6 +72,8 @@ if opt.dataset == 'twentynews':
     num_class_d = 20
 if opt.dataset == 'dbpedia':
     num_class_d = 14
+if opt.dataset == 'aiart':
+    num_class_d = 6
 
 opt.num_class_d = num_class_d
 
@@ -141,11 +143,26 @@ print(opt)
 #training classes
 flag_test = False
 for label_index in range(opt.num_class):
+    print(label_index)
+    # if label_index in [2,4,6,8]:
+    #     continue
+
     epoch_num = 0
     flag_test = False
     i = 0
 
     train_function.global_index = label_index
+    # # 3->2  5->3 7->4 9->5
+    # if label_index == 3:
+    #     train_function.global_index = 2
+    # elif label_index == 5:
+    #     train_function.global_index = 3
+    # elif label_index == 7:
+    #     train_function.global_index = 4
+    # elif label_index == 9:
+    #     train_function.global_index = 5
+
+
     max_acc = 0
 
     if label_index > 0:
@@ -195,13 +212,18 @@ for label_index in range(opt.num_class):
                     print("=========================")
                     print(test_labels_f.data.cpu()[:20])
                     print(results.data.cpu()[:20])
+                    # import pdb;pdb.set_trace()
                     print("=========================")
                     print(final_score_f.data.cpu()[:20])
                     print("=========================")
 
                 label_predicted = torch.Tensor.float((results == test_labels_f).data)
+
+
                 correct = torch.sum(label_predicted)
                 all = float(label_predicted.size(0))
+
+                print("Binary Accuracy on all images:{}".format(sum((results == 0) == (test_labels_f == 0))/all))
                 train_function.train()
 
                 acc = correct / all

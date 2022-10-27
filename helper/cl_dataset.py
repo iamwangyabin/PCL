@@ -201,7 +201,6 @@ class CLClassDataSet(object):
         #     i: (self._train_x[(self._train_y >= self.class_index[i]) * (self._train_y < self.class_index[i + 1])], self._train_y[(self._train_y >= self.class_index[i]) * (self._train_y < self.class_index[i + 1])]) for i in range(self.num_tasks)}
         # splitdata_test = {
         #     i: (self._test_x[(self._test_y >= self.class_index[i]) * (self._test_y < self.class_index[i + 1])], self._test_y[(self._test_y >= self.class_index[i]) * (self._test_y < self.class_index[i + 1])]) for i in range(self.num_tasks)}
-        import pdb;pdb.set_trace()
         if self._shuffled_indexes is None:
             self._shuffled_indexes = {i: np.array(
                 range(splitdata_train[i][0].shape[0])) for i in range(self.num_classes)}
@@ -209,7 +208,6 @@ class CLClassDataSet(object):
             np.random.shuffle(self._shuffled_indexes[i])
 
         for label in range(self.num_classes):
-            # pdb.set_trace()
             assert self._shuffled_indexes[label].shape[0] == splitdata_train[label][0].shape[0]
             splitdata_train[label] = (splitdata_train[label][0][self._shuffled_indexes[label]], splitdata_train[label][1][self._shuffled_indexes[label]])
 

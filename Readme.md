@@ -1,3 +1,9 @@
+# Fork for AIArt benchmark
+python main_aiart.py --dataset aiart --gpu 0
+
+
+
+
 #### Instructions
 
 This is the code for paper  **Continual Learning by Using Information of Each Class Holistically**
@@ -35,5 +41,6 @@ python main.py --dataset mnist --gpu 0
 
 
 python main_aiart.py --dataset cifar100 --gpu 0
+python main_aiart.py --dataset aiart --gpu 3
 
 
